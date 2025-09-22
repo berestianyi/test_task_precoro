@@ -5,10 +5,15 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from src.test_task.application import settings
+from src.test_task.persistence.models.base import Base
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
+from src.test_task.persistence import models
+config.set_main_option("sqlalchemy.url", settings.DATABASE_DSN)
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
@@ -18,13 +23,15 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+compare_type = True
+render_as_batch = False
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -44,10 +51,14 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=compare_type,
     )
 
     with context.begin_transaction():
         context.run_migrations()
+
+
+
 
 
 def run_migrations_online() -> None:
@@ -65,7 +76,10 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            compare_type=compare_type,
+            render_as_batch=render_as_batch,
         )
 
         with context.begin_transaction():
