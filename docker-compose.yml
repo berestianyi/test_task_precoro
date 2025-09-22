@@ -9,7 +9,7 @@ services:
       timeout: 2s
       retries: 20
     ports:
-      - "6381:6379"
+      - "6382:6379"
     restart: unless-stopped
 
 
@@ -25,7 +25,7 @@ services:
       timeout: 5s
       retries: 30
     ports:
-      - "5436:5432"
+      - "5437:5432"
     restart: unless-stopped
     volumes:
       - ./.docker-artifacts/db:/var/lib/postgresql/data
@@ -46,6 +46,6 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
     ports:
-      - "8006:8000"
+      - "8007:8000"
     volumes:
       - ./src:/app/src:rw
