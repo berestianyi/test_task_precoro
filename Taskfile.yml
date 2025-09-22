@@ -1,0 +1,96 @@
+version: '3'
+
+silent: true
+
+env:
+  APP_IMAGE: test-task-precoro-app:latest
+  POSTGRES_DB: test_task_db
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/test_task_db
+  REDIS_URL: redis://redis:6379/0
+  CELERY_BROKER_URL: redis://redis:6379/1
+  CELERY_RESULT_BACKEND: redis://redis:6379/2
+  MY_UID:
+    sh: echo "$(id -u):$(id -g)"
+  MY_GID:
+    sh: echo "$(id -g)"
+  MY_GUID:
+    sh: echo "$(id -u):$(id -g)"
+
+tasks:
+
+  build-app-image:
+    internal: true
+    summary: "Build application image"
+    sources:
+      - Taskfile.yml
+      - tools/docker/app.dockerfile
+      - pyproject.toml
+      - uv.lock
+    status:
+      - docker image inspect $APP_IMAGE > /dev/null
+    cmd: >
+      docker build 
+      -t $APP_IMAGE
+      -f tools/docker/app.dockerfile
+      --build-arg USER_ID=$MY_UID
+      --build-arg GROUP_ID=$MY_GID
+      --target app
+      .
+
+  make-migrations:
+    summary: "usage: task make-migration -- 'message'"
+    deps:
+      - build-app-image
+    vars:
+      MSG:
+        sh: echo "{{ trimAll "'" (trim .CLI_ARGS) }}"
+    cmd: >
+      docker compose run -u $MY_GUID --rm http-server sh -c
+      "uv run alembic -c tools/alembic/alembic.ini revision --autogenerate -m '{{ if .MSG }}{{ .MSG }}{{ else }}auto{{ end }}'"
+
+  run-migrations:
+    summary: "(default: head) usage: task run-migrations -- <target>"
+    deps:
+      - build-app-image
+    vars:
+      TARGET:
+        sh: echo "{{ if .CLI_ARGS }}{{ .CLI_ARGS }}{{ else }}head{{ end }}"
+    cmd: >
+      docker compose run -u $MY_GUID --rm http-server sh -c
+      "uv run alembic -c tools/alembic/alembic.ini upgrade {{ .TARGET }}"
+
+  migrate-down:
+    summary: "default: -1) usage: task migrate-down -- <target|'-1'>"
+    deps:
+      - build-app-image
+    vars:
+      STEP:
+        sh: echo "{{ if .CLI_ARGS }}{{ .CLI_ARGS }}{{ else }}-1{{ end }}"
+    cmd: >
+      docker compose run -u $MY_GUID --rm http-server sh -c
+      "uv run alembic -c tools/alembic/alembic.ini downgrade {{ .STEP }}"
+
+  run-app:
+    summary: "Run app"
+    deps:
+      - build-app-image
+    cmd: >
+      docker compose up --build
+
+
+  down-app:
+    summary: "Docker compose down"
+    cmd: >
+      docker compose down
+
+  full-down-app:
+    summary: "remove containers, networks, volumes, images"
+    cmd: >
+      docker compose down --rmi all --volumes --remove-orphans
+  init:
+    summary: "Initialize workspace"
+    cmds:
+      - uv sync
+      - echo "Workspace initialized :3"

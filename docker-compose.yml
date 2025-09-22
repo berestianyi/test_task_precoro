@@ -1,0 +1,51 @@
+services:
+
+  redis:
+    image: redis:7-alpine
+    command: [ "redis-server", "--save", "", "--appendonly", "no" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    ports:
+      - "6382:6379"
+    restart: unless-stopped
+
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    ports:
+      - "5437:5432"
+    restart: unless-stopped
+    volumes:
+      - ./.docker-artifacts/db:/var/lib/postgresql/data
+
+
+  http-server:
+    image: ${APP_IMAGE}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: >
+      gunicorn -w 1 -b 0.0.0.0:8000
+      --timeout 120 --graceful-timeout 10 --keep-alive 2
+      --access-logfile - --error-logfile - --log-level info
+      src.test_task.application.wsgi:app
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "8007:8000"
+    volumes:
+      - ./src:/app/src:rw
