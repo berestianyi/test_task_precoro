@@ -24,10 +24,11 @@ class UserRepository(
         result = self.db.execute(select(UserModel))
         return list(result.scalars().all())
 
-    def save(self, email: str, hashed_password: str) -> UserModel:
+    def save(self, user_id: int | None, email: str, hashed_password: str) -> UserModel:
         user = UserModel(
+            id=user_id,
             email=email,
-            hashed_password=hashed_password,
+            hashed_password=hashed_password
         )
         self.db.add(user)
         self.db.flush()
