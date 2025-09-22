@@ -24,11 +24,13 @@ def create_app():
     interface_container = InterfacesContainer()
     app.interface_container = interface_container
 
-    from src.test_task.interfaces.ssr.endpoints import auth
-    service_container.wire(modules=[auth])
+    from src.test_task.interfaces.ssr.endpoints import auth, product
+    service_container.wire(modules=[auth, product])
     interface_container.wire(modules=[auth])
 
     from src.test_task.interfaces.ssr.endpoints.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from src.test_task.interfaces.ssr.endpoints.product import product_bp
+    app.register_blueprint(product_bp)
     return app
