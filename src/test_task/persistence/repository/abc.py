@@ -30,7 +30,7 @@ class UserRepositoryABC(
     ABC
 ):
     @abstractmethod
-    def save(self, email: str, hashed_password: str) -> SomeModel:
+    def save(self,  user_id: int, email: str, hashed_password: str) -> SomeModel:
         pass
 
     @abstractmethod
