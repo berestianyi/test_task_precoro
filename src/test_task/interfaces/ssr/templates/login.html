@@ -7,7 +7,18 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <h1 class="h4 mb-3">Sign in</h1>
-
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="container mt-3">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
                 <form method="post" novalidate>
                     {{ form.hidden_tag() }}
 
@@ -31,7 +42,7 @@
                 </form>
 
                 <div class="text-center mt-3">
-                    <a href="{{ url_for('auth.register') }}">No account? Register</a>
+                    <a href="{{ url_for('auth.register') }}">Register</a>
                 </div>
             </div>
         </div>
