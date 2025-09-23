@@ -3,9 +3,10 @@ from src.test_task.services.abc import Input, SuccessfulOutput
 
 
 class LoginInput(Input):
+    owner_cookie: int
     email: str
     password: str
 
 
-class LoginSuccessfulOutput(SuccessfulOutput):
+class LoginOutput(SuccessfulOutput):
     user: UserModel

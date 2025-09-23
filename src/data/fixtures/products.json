@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Book",
+    "price": "12.50",
+    "quantity": 5
+  },
+  {
+    "name": "Phone",
+    "price": "499.00",
+    "quantity": 2
+  },
+  {
+    "name": "Laptop",
+    "price": "899.99",
+    "quantity": 0
+  },
+  {
+    "name": "Headphones",
+    "price": "59.90",
+    "quantity": 15
+  },
+  {
+    "name": "Coffee Mug",
+    "price": "7.50",
+    "quantity": 20
+  },
+  {
+    "name": "Backpack",
+    "price": "39.99",
+    "quantity": 10
+  }
+]

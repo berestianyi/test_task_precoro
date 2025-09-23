@@ -16,7 +16,7 @@
               <p class="mb-2">
                 <span class="fw-semibold">Price:</span>
                 <span class="fs-5">
-                  {{ "%.2f"|format(p.price) }}
+                  {{ "%.2f"|format(p.price) }} ₴
                 </span>
               </p>
 
@@ -29,8 +29,7 @@
               </div>
 
               <div class="mt-auto">
-                <a href="/products/{{ p.id }}" class="btn btn-outline-secondary btn-sm me-2">Details</a>
-                <form action="/cart/add" method="post" class="d-inline">
+                <form action="/cart/add/product/" method="post" class="d-inline">
                   <input type="hidden" name="product_id" value="{{ p.id }}">
                   <button class="btn btn-primary btn-sm" {% if p.quantity <= 0 %}disabled{% endif %}>
                     Add to cart
@@ -43,6 +42,6 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="alert alert-info">Пока нет товаров.</div>
+    <div class="alert alert-info">NO product.</div>
   {% endif %}
 {% endblock %}

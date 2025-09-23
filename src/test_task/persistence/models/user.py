@@ -1,12 +1,13 @@
 from typing import List
 
+from flask_login import UserMixin
 from sqlalchemy import String, BigInteger
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from .base import TimeMixin, Base
 
 
-class UserModel(TimeMixin, Base):
+class UserModel(TimeMixin, Base, UserMixin):
 
     __tablename__ = "users"
 

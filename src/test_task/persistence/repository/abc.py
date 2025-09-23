@@ -86,7 +86,7 @@ class CartRepositoryABC(
         pass
 
     @abstractmethod
-    def update(self, cart_id: int, owner_id: int, owner_cookie: int) -> SomeModel:
+    def update(self, cart_id: int, owner_id: int | None, owner_cookie: int | None) -> SomeModel:
         pass
 
     @abstractmethod

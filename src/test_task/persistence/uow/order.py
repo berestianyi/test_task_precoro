@@ -26,7 +26,7 @@ class OrderUoW(AbstractContextManager):
         self.db = self._session_factory()
         self.cart_repo = self._cart_repo(self.db)
         self.order_repo = self._order_repo(self.db)
-        self.order_item_repo = self._order_repo(self.db)
+        self.order_item_repo = self._order_item_repo(self.db)
         self.product_repo = self._product_repo(self.db)
         return self
 

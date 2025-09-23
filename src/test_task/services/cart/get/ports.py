@@ -2,12 +2,10 @@ from src.test_task.services.abc import Input, SuccessfulOutput
 from src.test_task.services.cart.dto import CartDTO
 
 
-class AddProductToCartInput(Input):
+class GetCartInput(Input):
     owner_id: int | None
     owner_cookie: int | None
-    cart_id: int | None
-    product_id: int
 
 
-class AddProductToCartOutput(SuccessfulOutput):
-    cart: CartDTO
+class GetCartOutput(SuccessfulOutput):
+    cart: CartDTO | None

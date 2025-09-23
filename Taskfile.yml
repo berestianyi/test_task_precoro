@@ -94,3 +94,15 @@ tasks:
     cmds:
       - uv sync
       - echo "Workspace initialized :3"
+
+  load-products:
+    summary: "Load product fixtures (usage: task load-products -- path/to/file.json)"
+    deps:
+      - build-app-image
+      - run-migrations
+    vars:
+      FIXTURES:
+        sh: echo "{{ if .CLI_ARGS }}{{ .CLI_ARGS }}{{ else }}src/data/fixtures/products.json{{ end }}"
+    cmd: >
+      docker compose run -u $MY_GUID --rm http-server sh -c
+      "uv run python -m src.data.fixtures.load_fixtures --file {{ .FIXTURES }}"

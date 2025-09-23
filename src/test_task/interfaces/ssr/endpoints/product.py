@@ -21,5 +21,5 @@ product_bp = Blueprint(
 def product_list(
         product_service: ProductListService = Provide[ServiceContainer.product_service],
 ):
-    products = product_service.execute(ProductListInput())
-    return render_template("products.html", products=products)
+    out = product_service.execute(ProductListInput())
+    return render_template("products.html", products=out.product_list)
