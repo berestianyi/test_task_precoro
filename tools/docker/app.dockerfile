@@ -31,3 +31,4 @@ USER nonroot
 
 COPY src/ /app/src
 COPY tools/alembic /app/tools/alembic
+COPY tools/fixtures /app/tools/fixtures
