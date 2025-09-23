@@ -34,7 +34,7 @@ class CartRepository(
         self.db.flush()
         return cart
 
-    def update(self, cart_id: int, owner_id: int, owner_cookie: int) -> SomeModel:
+    def update(self, cart_id: int, owner_id: int | None, owner_cookie: int | None) -> SomeModel:
         cart = self.db.get(CartModel, cart_id)
         if not cart:
             raise ValueError("Cart doesnt exist")
