@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://redis:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://redis:6379/2"
 
+    COOKIE_NAME = "owner_cookie"
+    COOKIE_MAX_AGE = 60 * 60 * 24 * 30
+    COOKIE_PATH = "/"
+    COOKIE_DOMAIN = None
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
