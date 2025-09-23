@@ -19,6 +19,12 @@ to apply all migrations:
   task run-migrations
 ```
 
+## Load product fixtures
+
+```bash
+  task load-products
+```
+
 ## TO RUN PROJECT
 
 ```bash
