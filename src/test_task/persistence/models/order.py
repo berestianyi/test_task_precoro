@@ -36,9 +36,10 @@ class OrderItemModel(Base):
     __tablename__ = "order_items"
 
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
-
-    price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False)
     purchase_price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False)
+    total_price: Mapped[Decimal] = mapped_column(
+        DECIMAL(10, 2), nullable=False, default=Decimal("0.00")
+    )
 
     product_id: Mapped[int] = mapped_column(
         BigInteger,

@@ -8,5 +8,5 @@ class RegisterInput(Input):
     owner_cookie: int | None = None
 
 
-class RegisterSuccessfulOutput(SuccessfulOutput):
+class RegisterOutput(SuccessfulOutput):
     user: UserModel

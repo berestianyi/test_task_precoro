@@ -1,5 +1,5 @@
 from src.test_task.services.abc import Input, SuccessfulOutput
-from src.test_task.services.cart.entity import CartEntity
+from src.test_task.services.cart.dto import CartDTO
 
 
 class RemoveProductFromCartInput(Input):
@@ -9,5 +9,5 @@ class RemoveProductFromCartInput(Input):
     product_id: int
 
 
-class RemoveProductFromCartSuccessfulOutput(SuccessfulOutput):
-    cart: CartEntity | None
+class RemoveProductFromCartOutput(SuccessfulOutput):
+    cart: CartDTO | None
