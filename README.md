@@ -1,4 +1,4 @@
-# TEST TASK FOR KEYMAKR
+# TEST TASK FOR PRECORO
 
 ## Getting started
 
