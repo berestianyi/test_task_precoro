@@ -8,7 +8,7 @@ from src.test_task.persistence.models.order import OrderItemModel
 from src.test_task.persistence.repository.abc import OrderItemRepositoryABC
 
 
-class OrderItemModelRepository(
+class OrderItemRepository(
     OrderItemRepositoryABC[OrderItemModel]
 ):
     def __init__(self, db: Session):
