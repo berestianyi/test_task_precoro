@@ -116,6 +116,9 @@ class CartItemRepositoryABC(t.Generic[SomeModel], ABC):
     def delete(self, cart_id: int, product_id: int) -> bool:
         pass
 
+    @abstractmethod
+    def get_by_ids(self, cart_id: int, product_id: int) -> SomeModel:
+        pass
 
 class OrderItemRepositoryABC(t.Generic[SomeModel], ABC):
 

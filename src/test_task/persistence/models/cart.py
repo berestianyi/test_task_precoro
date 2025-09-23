@@ -31,10 +31,13 @@ class CartItemModel(Base):
 
     product_id: Mapped[int] = mapped_column(
         BigInteger,
-        ForeignKey("products.id"),
+        ForeignKey("products.id", ondelete="RESTRICT"),
         primary_key=True
     )
-    product: Mapped["ProductModel"] = relationship()
+    product: Mapped["ProductModel"] = relationship(
+        back_populates="cart_items",
+        lazy="selectin",
+    )
 
     cart_id: Mapped[int] = mapped_column(
         BigInteger,

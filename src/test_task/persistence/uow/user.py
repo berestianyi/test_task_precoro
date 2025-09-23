@@ -2,7 +2,7 @@ from contextlib import AbstractContextManager
 
 from sqlalchemy.orm import Session
 
-from src.test_task.persistence.repository.user import UserRepository
+from src.test_task.persistence.repository.abc import UserRepositoryABC
 
 
 
@@ -12,11 +12,11 @@ class UserUoW(AbstractContextManager):
         self._user_repo = user_repo
 
         self.db: Session | None = None
-        self.user_repo: UserRepository | None = None
+        self.user_repo: UserRepositoryABC | None = None
 
     def __enter__(self):
         self.db = self._session_factory()
-        self.users = self._user_repo(self.db)
+        self.user_repo = self._user_repo(self.db)
         return self
 
     def __exit__(self, exc_type, exc, tb):

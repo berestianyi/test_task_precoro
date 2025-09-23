@@ -1,14 +1,12 @@
-from pathlib import Path
-
 from dependency_injector.wiring import Provide, inject
 from flask import render_template, Blueprint
 
 from src.test_task.application import ServiceContainer
+from src.test_task.interfaces.ssr.endpoints import TEMPLATES_DIR
 from src.test_task.services.product.list.ports import ProductListInput
 from src.test_task.services.product.list.service import ProductListService
 
-HERE = Path(__file__).resolve().parent
-TEMPLATES_DIR = HERE.parent / "templates"
+
 
 product_bp = Blueprint(
     "product",

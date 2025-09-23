@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.test_task.persistence.models.cart import CartItemModel
-from src.test_task.persistence.repository.abc import CartItemRepositoryABC, SomeModel
+from src.test_task.persistence.repository.abc import CartItemRepositoryABC
 
 
 class CartItemRepository(
@@ -19,7 +19,16 @@ class CartItemRepository(
         )
         return list(carts.scalars().all())
 
-    def save(self, cart_id: int, product_id: int, quantity: int) -> SomeModel:
+    def get_by_ids(self, cart_id: int, product_id: int) -> CartItemModel:
+        cart = self.db.execute(
+            select(CartItemModel).where(
+                CartItemModel.cart_id == cart_id,
+                CartItemModel.product_id == product_id
+            )
+        )
+        return cart.scalar_one_or_none()
+
+    def save(self, cart_id: int, product_id: int, quantity: int) -> CartItemModel:
         cart = CartItemModel(
             cart_id=cart_id,
             product_id=product_id,
@@ -29,7 +38,7 @@ class CartItemRepository(
         self.db.flush()
         return cart
 
-    def update(self, cart_id: int, product_id: int, quantity: int) -> SomeModel:
+    def update(self, cart_id: int, product_id: int, quantity: int) -> CartItemModel:
         cart = self.db.get(
             CartItemModel, {"cart_id": cart_id, "product_id": product_id}
         )
