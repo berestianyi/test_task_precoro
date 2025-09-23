@@ -2,7 +2,7 @@ from contextlib import AbstractContextManager
 
 from sqlalchemy.orm import Session
 
-from src.test_task.persistence.repository.product import ProductRepository
+from src.test_task.persistence.repository.abc import ProductRepositoryABC
 
 
 class ProductUoW(AbstractContextManager):
@@ -11,11 +11,11 @@ class ProductUoW(AbstractContextManager):
         self._product_repo = product_repo
 
         self.db: Session | None = None
-        self.product_repo: ProductRepository | None = None
+        self.product_repo: ProductRepositoryABC | None = None
 
     def __enter__(self):
         self.db = self._session_factory()
-        self.users = self._product_repo(self.db)
+        self.product_repo = self._product_repo(self.db)
         return self
 
     def __exit__(self, exc_type, exc, tb):
