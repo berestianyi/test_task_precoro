@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from sqlalchemy import Integer, String, DECIMAL, BigInteger
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from .base import Base, TimeMixin
 
@@ -15,3 +15,6 @@ class ProductModel(TimeMixin, Base):
     price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
+    cart_items: Mapped[list["CartItemModel"]] = relationship(
+        back_populates="product"
+    )
