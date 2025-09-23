@@ -13,7 +13,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-f", "--file",
-        default="src/data/fixtures/products.json",
+        default="tools/fixtures/products.json",
     )
     args = parser.parse_args()
 
