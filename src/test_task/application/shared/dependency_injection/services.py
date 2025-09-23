@@ -9,10 +9,12 @@ from src.test_task.persistence.repository.order.order_item import OrderItemRepos
 from src.test_task.persistence.repository.product import ProductRepository
 from src.test_task.persistence.repository.user import UserRepository
 from src.test_task.persistence.uow.cart import CartUoW
+from src.test_task.persistence.uow.order import OrderUoW
 from src.test_task.persistence.uow.product import ProductUoW
 from src.test_task.persistence.uow.user import UserUoW
 from src.test_task.services.cart.add_product_to_cart.service import AddProductToCartService
 from src.test_task.services.cart.delete_cart_item_from_cart.service import DeleteProductFromCartService
+from src.test_task.services.cart.get.service import GetCartService
 from src.test_task.services.cart.remove_product_from_cart.service import RemoveProductFromCartService
 from src.test_task.services.order.list.service import OrderListService
 from src.test_task.services.order.place_order.service import PlaceOrderService
@@ -31,10 +33,6 @@ def create_sessionmaker_sync(engine):
     return sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
 
 
-class OtderUoW:
-    pass
-
-
 class ServiceContainer(containers.DeclarativeContainer):
     config = providers.Configuration()
 
@@ -45,6 +43,7 @@ class ServiceContainer(containers.DeclarativeContainer):
         UserUoW,
         session_factory=session_factory,
         user_repo=UserRepository,
+        cart_repo=CartRepository,
     )
     product_uow = providers.Factory(
         ProductUoW,
@@ -59,7 +58,7 @@ class ServiceContainer(containers.DeclarativeContainer):
         product_repo=ProductRepository
     )
     order_uow = providers.Factory(
-        OtderUoW,
+        OrderUoW,
         session_factory=session_factory,
         cart_repo=CartRepository,
         order_repo=OrderRepository,
@@ -85,13 +84,19 @@ class ServiceContainer(containers.DeclarativeContainer):
         ProductListService,
         uow_factory=product_uow.provider,
     )
+
     add_product_to_cart_service = providers.Factory(
         AddProductToCartService,
-        uow_factory=cart_uow.provider,
+        uow_factory=cart_uow.provider
     )
 
     remove_product_from_cart_service = providers.Factory(
         RemoveProductFromCartService,
+        uow_factory=cart_uow.provider,
+    )
+
+    get_cart_service = providers.Factory(
+        GetCartService,
         uow_factory=cart_uow.provider,
     )
 
@@ -105,7 +110,7 @@ class ServiceContainer(containers.DeclarativeContainer):
         uow_factory=order_uow.provider
     )
 
-    place_oder_service = providers.Factory(
+    place_order_service = providers.Factory(
         PlaceOrderService,
         uow_factory=order_uow.provider
     )

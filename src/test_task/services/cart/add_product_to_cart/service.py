@@ -3,22 +3,20 @@ import typing as t
 from src.test_task.persistence.models.cart import CartModel
 from src.test_task.persistence.uow.cart import CartUoW
 from src.test_task.services.abc import ServiceABC
-from src.test_task.services.cart.add_product_to_cart.ports import AddProductToCartSuccessfulOutput, \
+from src.test_task.services.cart.add_product_to_cart.ports import AddProductToCartOutput, \
     AddProductToCartInput
-from src.test_task.services.cart.entity import CartEntity, CartItemEntity
-from src.test_task.services.user.uuid import IdGenerator
+from src.test_task.services.cart.dto import CartDTO, CartItemDTO
+from src.test_task.services.product.dto import ProductDTO
 
 
-class AddProductToCartService(ServiceABC[AddProductToCartInput, AddProductToCartSuccessfulOutput]):
+class AddProductToCartService(ServiceABC[AddProductToCartInput, AddProductToCartOutput]):
 
     def __init__(
             self,
             uow_factory: t.Callable[[], CartUoW],
-            uuid_generator: IdGenerator
 
     ):
         self._uow_factory = uow_factory
-        self._uuid_generator = uuid_generator
 
     @staticmethod
     def _get_or_create_cart(uow, owner_id: int | None, owner_cookie: str | None) -> CartModel:
@@ -62,15 +60,28 @@ class AddProductToCartService(ServiceABC[AddProductToCartInput, AddProductToCart
                 quantity=new_quantity
             )
 
-    def execute(self, service_input: AddProductToCartInput) -> AddProductToCartSuccessfulOutput:
+    def execute(self, service_input: AddProductToCartInput) -> AddProductToCartOutput:
         with self._uow_factory() as uow:
             cart = self._get_or_create_cart(uow, service_input.owner_id, service_input.owner_cookie)
 
             self._add_or_update_cart_item(uow, cart.id, service_input.product_id)
 
-            return AddProductToCartSuccessfulOutput(cart=CartEntity(
-                cart=cart,
+            return AddProductToCartOutput(cart=CartDTO(
+                id=cart.id,
+                owner_cookie=cart.owner_cookie,
+                owner_id=cart.owner_id,
                 cart_items=[
-                    CartItemEntity(cart_item=item) for item in cart.cart_items
+                    CartItemDTO(
+                        product_id=item.product_id,
+                        cart_id=item.cart_id,
+                        quantity=item.quantity,
+                        available_quantity=item.product.quantity,
+                        product=ProductDTO(
+                            id=item.product.id,
+                            name=item.product.name,
+                            price=item.product.price,
+                            quantity=item.product.quantity
+                        )
+                    ) for item in cart.cart_items
                 ]
             ))
