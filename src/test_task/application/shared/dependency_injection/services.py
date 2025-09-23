@@ -4,6 +4,8 @@ from sqlalchemy.orm import sessionmaker
 
 from src.test_task.persistence.repository.cart.cart import CartRepository
 from src.test_task.persistence.repository.cart.cart_item import CartItemRepository
+from src.test_task.persistence.repository.order.order import OrderRepository
+from src.test_task.persistence.repository.order.order_item import OrderItemRepository
 from src.test_task.persistence.repository.product import ProductRepository
 from src.test_task.persistence.repository.user import UserRepository
 from src.test_task.persistence.uow.cart import CartUoW
@@ -12,6 +14,8 @@ from src.test_task.persistence.uow.user import UserUoW
 from src.test_task.services.cart.add_product_to_cart.service import AddProductToCartService
 from src.test_task.services.cart.delete_cart_item_from_cart.service import DeleteProductFromCartService
 from src.test_task.services.cart.remove_product_from_cart.service import RemoveProductFromCartService
+from src.test_task.services.order.list.service import OrderListService
+from src.test_task.services.order.place_order.service import PlaceOrderService
 from src.test_task.services.product.list.service import ProductListService
 from src.test_task.services.user.hash import BcryptHasher
 from src.test_task.services.user.login.service import LoginService
@@ -25,6 +29,10 @@ def create_engine_sync(dsn: str):
 
 def create_sessionmaker_sync(engine):
     return sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+
+
+class OtderUoW:
+    pass
 
 
 class ServiceContainer(containers.DeclarativeContainer):
@@ -48,6 +56,14 @@ class ServiceContainer(containers.DeclarativeContainer):
         session_factory=session_factory,
         cart_repo=CartRepository,
         cart_item_repo=CartItemRepository,
+        product_repo=ProductRepository
+    )
+    order_uow = providers.Factory(
+        OtderUoW,
+        session_factory=session_factory,
+        cart_repo=CartRepository,
+        order_repo=OrderRepository,
+        order_item_repo=OrderItemRepository,
         product_repo=ProductRepository
     )
 
@@ -82,4 +98,14 @@ class ServiceContainer(containers.DeclarativeContainer):
     delete_product_from_cart_service = providers.Factory(
         DeleteProductFromCartService,
         uow_factory=cart_uow.provider,
+    )
+
+    order_list_service = providers.Factory(
+        OrderListService,
+        uow_factory=order_uow.provider
+    )
+
+    place_oder_service = providers.Factory(
+        PlaceOrderService,
+        uow_factory=order_uow.provider
     )
